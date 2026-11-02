@@ -52,7 +52,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <OfflineBanner />
-        <ImageKitProvider urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}>
+        <ImageKitProvider urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ''}>
           {children}
         </ImageKitProvider>
         <Toaster />

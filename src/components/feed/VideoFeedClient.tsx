@@ -1,6 +1,6 @@
-﻿'use client';
+'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { VideoItem, CategoryMeta } from '@/types';
 import { VideoPlayer, VideoPlayerRef } from '@/components/video/VideoPlayer';
 import { VideoInfoHUD } from '@/components/feed/VideoInfoHUD';
@@ -39,13 +39,15 @@ export function VideoFeedClient({ videos, categoryMeta }: VideoFeedClientProps) 
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   // Pre-compute thumbnail URLs so they're available on first render (instant covers)
-  const thumbnailUrls = useRef<string[]>(
-    videos.map((v) => v.thumbnailUrl || getVideoThumbnailUrl(v.imageKitUrl, v.aspectRatio))
+  const thumbnailUrls = useMemo(
+    () => videos.map((v) => v.thumbnailUrl || getVideoThumbnailUrl(v.imageKitUrl, v.aspectRatio)),
+    [videos]
   );
 
   // Pre-compute optimized video source URLs
-  const optimizedVideoUrls = useRef<string[]>(
-    videos.map((v) => getOptimizedVideoUrl(v.imageKitUrl))
+  const optimizedVideoUrls = useMemo(
+    () => videos.map((v) => getOptimizedVideoUrl(v.imageKitUrl)),
+    [videos]
   );
 
   // Intersection Observer to detect which video is currently in view
@@ -216,8 +218,8 @@ export function VideoFeedClient({ videos, categoryMeta }: VideoFeedClientProps) 
         aria-label="Video feed"
       >
         {videos.map((video, index) => {
-          const thumbUrl = thumbnailUrls.current[index];
-          const videoUrl = Math.abs(currentIndex - index) <= 1 ? optimizedVideoUrls.current[index] : undefined;
+          const thumbUrl = thumbnailUrls[index];
+          const videoUrl = Math.abs(currentIndex - index) <= 1 ? optimizedVideoUrls[index] : undefined;
 
           return (
             <div
